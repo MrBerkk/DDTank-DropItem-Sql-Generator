@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DDTANK Drop Sql Generator | MrBerk</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #0d1117; 
+      color: #e6edf3; 
+      margin: 40px auto; 
+      width: 700px;
+    }
+    h1 { text-align: center; color: #58a6ff; }
+    label { display: block; margin-top: 20px; font-weight: bold; }
+    input, textarea {
+      width: 100%; 
+      padding: 10px; 
+      border-radius: 8px; 
+      border: 1px solid #30363d; 
+      background: #161b22; 
+      color: #e6edf3;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 20px; 
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #238636;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #2ea043; }
+    pre {
+      margin-top: 25px; 
+      background: #161b22; 
+      padding: 20px; 
+      border-radius: 10px; 
+      white-space: pre-wrap;
+      border: 1px solid #30363d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drop_Item SQL Generator</h1>
+  <label>DropId:</label>
+  <input type="text" id="dropId" placeholder="DropId (örnek: 13000)">
+
+  <label>ItemId Listesi (virgülle ayrılmış):</label>
+  <textarea id="items" rows="5" placeholder="ItemId (örnek: 11001,11002,11003,...)"></textarea>
+
+  <button onclick="generateSQL()">SQL OLUŞTUR</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    function generateSQL() {
+      const dropId = document.getElementById('dropId').value.trim();
+      const itemsRaw = document.getElementById('items').value.trim();
+
+      if (!dropId || !itemsRaw) {
+        document.getElementById('output').textContent = '⚠️ Lütfen hem DropId hem ItemId listesini girin.';
+        return;
+      }
+
+      const items = itemsRaw.split(',').map(i => i.trim()).filter(i => i);
+      let sql = `INSERT INTO Drop_Item (DropId, ItemId, ValueDate, IsBind, Random, BeginData, EndData, IsTips, IsLogs)\nVALUES\n`;
+
+      sql += items.map((id, index) => 
+        `('${dropId}', '${id}', 0, 0, 0, 0, 0, 0, 0)` + 
+        (index < items.length - 1 ? ',' : ';')
+      ).join('\n');
+
+      document.getElementById('output').textContent = sql;
+    }
+  </script>
+</body>
+</html>
